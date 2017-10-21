@@ -2,7 +2,7 @@
 <html>
 <head>
 	<title>NYT Search</title>
-	
+
   <!-- Bootstrap File -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
@@ -12,8 +12,57 @@
 </head>
 <body>
 
+	<div class="container">
+		<div class="jumbotron">
+			<div class="container text-center">
+				<h1>New York Times Search</h1>
+			</div>
+		</div>
+	</div>
 
 
 
+	<div class="row">
+	<div class="col-md-2"></div>
+	<div class="col-md-8">
+		<div class="panel panel-primary">
+  			<div class="panel-heading">Search Parameters</div>
+  				<div class="panel-body">
+				<form>
+	<div class="form-group">
+		<label>Search Term:</label>
+		<input type="text" class="form-control" name="searchTerm">
+	</div>
+
+	<div class="form-group">
+		<label>Number of Records to Retrieve:</label>
+		<select class="form-control" name="numRecords">
+			<option value=5 >1</option>
+	      	<option value=5 selected="true">5</option>
+	      	<option value=10 >10</option>
+	     </select> 	
+	</div>
+
+	<div class="form-group">
+		<label>Start Year (optional):</label>
+		<input type="text" class="form-control" name="startYear">
+	</div>
+
+	<div class="form-group">
+		<label>End Year (optional):</label>
+		<input type="text" class="form-control" name="endYear">
+	</div>
+	
+	<button class="btn btn-primary">Search</button>
+	<button class="btn">Clear Results</button>
+</form>
+  			</div>
+  			
+		</div>
+	</div>
+	<div class="col-md-2"></div>
+	</div>
+
+	<div class="row"></div>
 </body>
 </html>
