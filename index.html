@@ -19,12 +19,41 @@
 			</div>
 		</div>
 	</div>
+
+
+
 	<div class="row">
 	<div class="col-md-2"></div>
 	<div class="col-md-8">
 		<div class="panel panel-primary">
-  			<div class="panel-body">Search Parameters</div>
-  			<div class="panel-footer">Panel Footer</div>
+  			<div class="panel-heading">Search Parameters</div>
+  				<div class="panel-body">
+				<form>
+	<div class="form-group">
+		<label>Search Term:</label>
+		<input type="text" class="form-control" name="searchTerm">
+	</div>
+
+	<div class="form-group">
+		<label>Number of Records to Retrieve:</label>
+		<input type="text" class="form-control" name="numRecords">
+	</div>
+
+	<div class="form-group">
+		<label>Start Year (optional):</label>
+		<input type="text" class="form-control" name="startYear">
+	</div>
+
+	<div class="form-group">
+		<label>End Year (optional):</label>
+		<input type="text" class="form-control" name="endYear">
+	</div>
+	
+	<button class="btn">Search</button>
+	<button class="btn">Clear Results</button>
+</form>
+  			</div>
+  			
 		</div>
 	</div>
 	<div class="col-md-2"></div>
