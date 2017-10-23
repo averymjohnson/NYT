@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>NYT Search</title>
+  <title>NYT Search</title>
 
   <!-- Bootstrap File -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
@@ -12,57 +12,138 @@
 </head>
 <body>
 
-	<div class="container">
-		<div class="jumbotron">
-			<div class="container text-center">
-				<h1>New York Times Search</h1>
-			</div>
-		</div>
-	</div>
+  <div class="container">
+    <div class="jumbotron">
+      <div class="container text-center">
+        <h1>New York Times Search</h1>
+      </div>
+    </div>
+  </div>
 
+<!-- TSA - I changed name= to id= in all of the inputs.  It made the search a bit easier and I wasn't sure
+  if my search by name was working.  It was, but this was a good test. -->
 
+  <div class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
+    <div class="panel panel-primary">
+        <div class="panel-heading">Search Parameters</div>
+          <div class="panel-body">
+        <form>
+   <div class="form-group"> 
+    <label>Search Term:</label>
+    <input type="text" class="form-control" id="searchTerm">
+   </div> 
 
-	<div class="row">
-	<div class="col-md-2"></div>
-	<div class="col-md-8">
-		<div class="panel panel-primary">
-  			<div class="panel-heading">Search Parameters</div>
-  				<div class="panel-body">
-				<form>
-	<div class="form-group">
-		<label>Search Term:</label>
-		<input type="text" class="form-control" name="searchTerm">
-	</div>
+  <div class="form-group">
+    <label>Number of Records to Retrieve:</label>
+    <select class="form-control" id="numRecords">
+      <option value=5 >1</option>
+          <option value=5 selected="true">5</option>
+          <option value=10 >10</option>
+       </select>  
+  </div>
 
-	<div class="form-group">
-		<label>Number of Records to Retrieve:</label>
-		<select class="form-control" name="numRecords">
-			<option value=5 >1</option>
-	      	<option value=5 selected="true">5</option>
-	      	<option value=10 >10</option>
-	     </select> 	
-	</div>
+  <div class="form-group">
+    <label>Start Year (optional):</label>
+    <input type="text" class="form-control" id="startYear">
+  </div>
 
-	<div class="form-group">
-		<label>Start Year (optional):</label>
-		<input type="text" class="form-control" name="startYear">
-	</div>
+  <div class="form-group">
+    <label>End Year (optional):</label>
+    <input type="text" class="form-control" id="endYear">
+  </div>
+  
+  <!-- TSA - added an id here as well for onclick event -->
 
-	<div class="form-group">
-		<label>End Year (optional):</label>
-		<input type="text" class="form-control" name="endYear">
-	</div>
-	
-	<button class="btn btn-primary">Search</button>
-	<button class="btn">Clear Results</button>
+  <button class="btn btn-primary" id="searchFor">Search</button>
+  <button class="btn">Clear Results</button>
 </form>
-  			</div>
-  			
-		</div>
-	</div>
-	<div class="col-md-2"></div>
-	</div>
+        </div>
+        
+    </div>
+  </div>
+  <div class="col-md-2"></div>
+  </div>
 
-	<div class="row"></div>
+  <div class="row"></div>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  
+  <script type="text/javascript">
+
+                      // our variables to use
+                      var startYear = 0; //start year
+                      var endYear = 0;   //end year
+                      var numItems = 0;  //number of records to show
+                      var searchFor = ""; //searchTerm
+
+//this is the base url before anything is appended
+var startUrl = "https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=175d869a6d18429eb7669493355a55a9"
+
+        // Added id searchFor on the search button.  When id searchFor is clicked...
+        $("#searchFor").on("click", function() {
+
+            //find element on page with id of searchTerm, add that to base url
+            //need to add something that if searchFor is NULL it's an error
+            searchFor = "&q=" + $("#searchTerm").val();
+            url = startUrl + searchFor
+      
+            //find the start year, could be empty          
+            startYear = $("#startYear").val();
+ 
+              //if we got a number back for start year, use it.  If not, don't add it to the url
+              if (parseInt(startYear)) {
+              url = url + "&begin_date=" + startYear + "0101";
+           }
+
+
+            //find the end year, could be empty 
+            endYear = $("#endYear").val();
+
+              //If we got a number back for end year, use that one too.  Again, if empty don't add that to search
+              if (parseInt(endYear)) {
+              url = url + "&end_date=" + endYear + "1231";
+           }
+
+              //Get the number of items to display. We use this later
+              numItems = $("#numRecords").val();
+
+              //invoke getinfo, pass numItems and url to the function
+              getInfo(numItems, url)
+              alert(url) //url shows up fine
+
+        }); //end of onclick
+
+        // once we get all of the data, run this function, pass the number of records in numitems and url
+        function getInfo(numItems, url) {
+            $.ajax({
+            url: url,
+            method: 'GET',
+          }).done(function(result) {
+
+          alert("Second shwing of url " + url); //again, seems fine on alert
+          alert(result); //shows an object returned
+          console.log(result); //DOESN'T WORK!
+
+
+          for (i = 0; i < numItems; i++) { //this is going to be used to display the articles.  
+
+          //AGAIN, THE ALERT WORKS, SHOWS THE URL, THE BYLINE, THE MAIN ON THE ARTICLE, BUT IT WON'T CONSOLE AND I CAN'T USE
+          //THE DATA
+          alert (result.response.docs[i].web_url + result.response.docs[i].headline.main + result.response.docs[i].byline.original);
+          console.log(result.response.docs[i].web_url);
+          console.log(result.response.docs[i].headline.main);
+          console.log(result.response.docs[i].byline.original);
+      } //end of for loop
+
+    }); //end of result
+
+  }; //end of getInfo function
+
+ </script>
+
 </body>
+
 </html>
