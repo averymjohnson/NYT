@@ -6,8 +6,6 @@
   <!-- Bootstrap File -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
-  <!-- JQuery -->
-  <script src="https://code.jquery.com/jquery.js"></script>
 
 </head>
 <body>
@@ -20,58 +18,69 @@
     </div>
   </div>
 
-<!-- TSA - I changed name= to id= in all of the inputs.  It made the search a bit easier and I wasn't sure
-  if my search by name was working.  It was, but this was a good test. -->
-
   <div class="row">
-  <div class="col-md-2"></div>
-  <div class="col-md-8">
-    <div class="panel panel-primary">
+    <div class="col-md-8 col-md-offset-2">
+
+      <div class="panel panel-primary">
         <div class="panel-heading">Search Parameters</div>
           <div class="panel-body">
-        <form>
-   <div class="form-group"> 
-    <label>Search Term:</label>
-    <input type="text" class="form-control" id="searchTerm">
-   </div> 
 
-  <div class="form-group">
-    <label>Number of Records to Retrieve:</label>
-    <select class="form-control" id="numRecords">
-      <option value=5 >1</option>
-          <option value=5 selected="true">5</option>
-          <option value=10 >10</option>
-       </select>  
-  </div>
+              <div class="form-group">
+                <label>Search Term:</label>
+                <input type="text" class="form-control" name="searchTerm" id="searchTerm" >
+              </div> 
 
-  <div class="form-group">
-    <label>Start Year (optional):</label>
-    <input type="text" class="form-control" id="startYear">
-  </div>
+              <div class="form-group">
+                 <label>Number of Records to Retrieve:</label>
+                   <select class="form-control" id="numRecords" name="numRecords">
 
-  <div class="form-group">
-    <label>End Year (optional):</label>
-    <input type="text" class="form-control" id="endYear">
-  </div>
+                  <-- TSA updated value for option 1 to 1, was 5. -->
+                      <option value=1 >1</option>
+                      <option value=5 selected="true">5</option>
+
+                      <option value=10 >10</option>
+                   </select>  
+
+              </div>
+
+
+              <div class="form-group">
+                  <label>Start Year (optional):</label>
+                  <input type="text" class="form-control" id="startYear" name="startYear">
+              </div>
+
+              <div class="form-group">
+                <label>End Year (optional):</label>
+                <input type="text" class="form-control" id="endYear" name="endYear">
+              </div>
+
+              <!-- TSA - added an id here as well for onclick event -->
+              <div class="panel-footer">
+                <button type="submit" class="btn btn-primary" id="searchFor">Search</button>
+                <button class="btn">Clear Results</button>
+              </div>
+
+          </div>
+      </div> <!-- end panel-primary -->
+    </div> <!-- end of col-md-8 with offset -->
+  </div> <!-- end of row -->
+
+  <div id="displayResults" class="container"></div>
   
-  <!-- TSA - added an id here as well for onclick event -->
-
-  <button class="btn btn-primary" id="searchFor">Search</button>
-  <button class="btn">Clear Results</button>
-</form>
-        </div>
-        
-    </div>
-  </div>
-  <div class="col-md-2"></div>
-  </div>
-
-  <div class="row"></div>
-
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://code.jquery.com/jquery.js"></script>
   
   <script type="text/javascript">
+
+// *******************************************************************************************************
+// THINGS THAT STILL NEED TO BE DONE:
+// 1. Add a check such that if search term is blank, you get an error
+// 2. if start year is after end year, you get an error
+// 3. Clear results empties the ids for all of the terms, or just refreshes the page.  From what I read,
+// it may be better to refresh the page as empty may hold on to cached info.
+// 4. Format the output correctly for the items found.  
+// *******************************************************************************************************
 
                       // our variables to use
                       var startYear = 0; //start year
@@ -90,29 +99,26 @@ var startUrl = "https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key
             searchFor = "&q=" + $("#searchTerm").val();
             url = startUrl + searchFor
       
-            //find the start year, could be empty          
-            startYear = $("#startYear").val();
+              //find the start year, could be empty          
+              startYear = $("#startYear").val();
  
               //if we got a number back for start year, use it.  If not, don't add it to the url
               if (parseInt(startYear)) {
               url = url + "&begin_date=" + startYear + "0101";
-           }
+            }
 
 
-            //find the end year, could be empty 
-            endYear = $("#endYear").val();
-
+              //find the end year, could be empty 
+              endYear = $("#endYear").val();
               //If we got a number back for end year, use that one too.  Again, if empty don't add that to search
               if (parseInt(endYear)) {
               url = url + "&end_date=" + endYear + "1231";
-           }
+            }
 
               //Get the number of items to display. We use this later
               numItems = $("#numRecords").val();
-
               //invoke getinfo, pass numItems and url to the function
               getInfo(numItems, url)
-              alert(url) //url shows up fine
 
         }); //end of onclick
 
@@ -123,22 +129,14 @@ var startUrl = "https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key
             method: 'GET',
           }).done(function(result) {
 
-          alert("Second shwing of url " + url); //again, seems fine on alert
-          alert(result); //shows an object returned
-          console.log(result); //DOESN'T WORK!
+              for (i = 0; i < numItems; i++) { //this is going to be used to display the articles.  
+                var storyDiv = "<div>" + result.response.docs[i].web_url + "<br>" + 
+                                         result.response.docs[i].headline.main + "<br>" + 
+                                         result.response.docs[i].byline.original + "<br><br></div>";
+                $("#displayResults").prepend(storyDiv);
+            } //end of for loop
 
-
-          for (i = 0; i < numItems; i++) { //this is going to be used to display the articles.  
-
-          //AGAIN, THE ALERT WORKS, SHOWS THE URL, THE BYLINE, THE MAIN ON THE ARTICLE, BUT IT WON'T CONSOLE AND I CAN'T USE
-          //THE DATA
-          alert (result.response.docs[i].web_url + result.response.docs[i].headline.main + result.response.docs[i].byline.original);
-          console.log(result.response.docs[i].web_url);
-          console.log(result.response.docs[i].headline.main);
-          console.log(result.response.docs[i].byline.original);
-      } //end of for loop
-
-    }); //end of result
+        }); //end of results function
 
   }; //end of getInfo function
 
